@@ -1,0 +1,6 @@
+source "https://rubygems.org"
+gem "sinatra", :require => "sinatra/base"
+gem "omniauth"
+gem "omniauth-quickbooks"
+gem "dotenv"
+gem "qbo_api"

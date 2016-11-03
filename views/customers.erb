@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title><%= title %></title>
+  </head>
+  <body>
+
+  <h3>Select a default customer:</h3>
+  <div>
+    <form method = "post" action = "set_default_customer">
+      <select name="default_customer">
+          <% @resp["QueryResponse"]["Customer"].each do |c| %>
+              <option value =<%= c["Id"] %>><%= c["FullyQualifiedName"] %></option>
+          <% end %>
+      </select>
+      <div>
+        <input type="submit" value="Submit">
+      </div>
+    </form>
+  </div>
+
+  </body>
+</html>
