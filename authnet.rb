@@ -10,11 +10,10 @@ class AuthNetImporter < Sinatra::Base
   PORT  = 9393
   CONSUMER_KEY = ENV['QBO_API_CONSUMER_KEY']
   CONSUMER_SECRET = ENV['QBO_API_CONSUMER_SECRET']
-#  VERIFIER_TOKEN = ENV['QBO_API_VERIFIER_TOKEN']
 
 
   set :port, PORT
-  use Rack::Session::Pool #can use this in production to store larger objects
+  use Rack::Session::Pool
 
   QboApi.production = true
 
@@ -46,7 +45,6 @@ class AuthNetImporter < Sinatra::Base
       api = QboApi.new(oauth_data)
       @resp = api.query(%{select * from Customer}) #api.all :customers
     end
-    puts @resp
     erb :customers
   end
 
@@ -62,7 +60,6 @@ class AuthNetImporter < Sinatra::Base
       api = QboApi.new(oauth_data)
       @resp = api.query(%{select * from Class}) #api.all :customers
     end
-    puts @resp
     erb :classes
   end
 
@@ -111,7 +108,6 @@ class AuthNetImporter < Sinatra::Base
   end
 
   post '/set_file' do
-    puts params
     session[:file] = params["file_name"]
     session[:position] = 0
     redirect :new_receipt
@@ -121,7 +117,6 @@ class AuthNetImporter < Sinatra::Base
 
   get '/new_receipt' do
     session[:position] = session[:position] || 0
-    puts session[:file]
     if session[:token]
       api = QboApi.new(oauth_data)
       @default_item = api.get :item, session[:default_item_id]
@@ -155,10 +150,6 @@ class AuthNetImporter < Sinatra::Base
     erb :create_receipt
   end
 
-
-  #add a method for a button on the create receipt page to view the reciept and approve it
-  #thinking I should add current receipt to session
-
   post '/send_to_quickbooks' do
     @receipt = session[:current_receipt]
     puts @receipt
@@ -188,19 +179,9 @@ class AuthNetImporter < Sinatra::Base
       api.all :salesreceipt do |r|
         response.push r
       end
-      #puts response
       @sample = response.first
     end
     erb :sales_receipt_sample
-  end
-
-
-  post '/webhooks' do
-    request.body.rewind
-    data = request.body.read
-    puts JSON.parse data
-    verified = verify_webhook(data, env['HTTP_INTUIT_SIGNATURE'])
-    puts "Verified: #{verified}"
   end
 
   def oauth_data
@@ -229,6 +210,5 @@ class AuthNetImporter < Sinatra::Base
     end
     total
   end
-
 
 end

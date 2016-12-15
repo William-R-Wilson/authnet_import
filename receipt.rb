@@ -9,11 +9,6 @@ class Receipt
     @data = process_deposit(contributions, info)
   end
 
-
-  def get_deposit_info
-    return {num: 3, tot: 67.00, fee: 2.00}  #default info for now
-  end
-
   def find_place(contributions, count) #move to the right place in the file before processing
     count.times do
       row = contributions.first
