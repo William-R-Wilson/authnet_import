@@ -131,11 +131,13 @@ class AuthNetImporter < Sinatra::Base
   #step 7 review and decide to post to Quickbooks
 
   post "/create_receipt" do
+    @date = params[:trans_date]
     @fee = params[:fee_amount]
     @num_trans = params[:num_transactions]
     @receipt_total = params[:receipt_total]
     r = Receipt.new(session[:file], {num: @num_trans.to_i,
                                   fee: @fee,
+                                  date: @date,
                                   tot: @receipt_total,
                                   place: session[:position].to_i,
                                   item: session[:default_item_id],
@@ -164,7 +166,7 @@ class AuthNetImporter < Sinatra::Base
     redirect :new_receipt
   end
 
-  get 'skip_receipt' do
+  get '/skip_receipt' do
     redirect :new_receipt
   end
 
@@ -199,7 +201,7 @@ class AuthNetImporter < Sinatra::Base
     session[:token] = auth[:token]
     session[:secret] = auth[:secret]
     session[:realm_id] = params['realmId']
-    '<!DOCTYPE html><html lang="en"><head></head><body><script>window.opener.location.reload(); window.close();</script></body></html>'
+    '<!DOCTYPE html><html lang="en"><head></head><body><script0>window.opener.location.reload(); window.close();</script></body></html>'
   end
 
 

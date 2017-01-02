@@ -6,12 +6,14 @@ class Receipt
     puts "receipt initialized!"
     output = CSV.open(file, headers: true, header_converters: :symbol, col_sep: "\t")
     contributions = output.each
+    puts contributions.first
     @data = process_deposit(contributions, info)
   end
 
   def find_place(contributions, count) #move to the right place in the file before processing
     count.times do
       row = contributions.first
+      puts row
       if row[:response_code] != "1"
         redo
       end
@@ -26,6 +28,7 @@ class Receipt
   def process_deposit(contributions, info)
     receipt = {}
     receipt["CustomerRef"] = {"value" => "#{info[:customer]}"}
+    receipt["TxnDate"] = info[:date]
     receipt["Line"] = []
     receipt_total = 0
     count = 0

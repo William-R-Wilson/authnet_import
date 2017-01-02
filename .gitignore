@@ -8,6 +8,8 @@
 /spec/reports/
 /tmp/
 .env
+.env-production
+.env-development
 .ruby-version
 *.gem
 .rspec
