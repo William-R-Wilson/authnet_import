@@ -1,5 +1,3 @@
-#require 'Sinatra'
-
 class AuthNetImporter < Sinatra::Base
 
 
@@ -147,6 +145,7 @@ class AuthNetImporter < Sinatra::Base
                                   })
     @receipt = r.data
     @calculated_total = get_receipt_total @receipt
+    session[:prev_pos] = session[:position]
     session[:position] += @num_trans.to_i
     session[:current_receipt] = @receipt
     erb :create_receipt
@@ -170,8 +169,9 @@ class AuthNetImporter < Sinatra::Base
     redirect :new_receipt
   end
 
-  post 'try_again' do
-    #not yet implemented
+  get '/try_again' do
+    session[:position] = session[:prev_pos]
+    redirect :new_receipt
   end
 
   get '/sales_receipt_sample' do
@@ -201,7 +201,7 @@ class AuthNetImporter < Sinatra::Base
     session[:token] = auth[:token]
     session[:secret] = auth[:secret]
     session[:realm_id] = params['realmId']
-    '<!DOCTYPE html><html lang="en"><head></head><body><script0>window.opener.location.reload(); window.close();</script></body></html>'
+    '<!DOCTYPE html><html lang="en"><head></head><body><script>window.opener.location.reload(); window.close();</script></body></html>'
   end
 
 
