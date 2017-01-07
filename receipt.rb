@@ -3,10 +3,8 @@ class Receipt
   attr_accessor :data
 
   def initialize(file, info={})
-    puts "receipt initialized!"
     output = CSV.open(file, headers: true, header_converters: :symbol, col_sep: "\t")
     contributions = output.each
-    puts contributions.first
     @data = process_deposit(contributions, info)
   end
 

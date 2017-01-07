@@ -1,0 +1,5 @@
+<%= @report.to_s %>
+
+<% @report["Line"].each do |l| %>
+  <div><%= l %></div>
+<% end %>

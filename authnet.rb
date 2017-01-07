@@ -4,6 +4,7 @@ class AuthNetImporter < Sinatra::Base
   Dotenv.load
 
   require_relative 'receipt'
+  require_relative 'cc_report'
 
   PORT  = 9393
   CONSUMER_KEY = ENV['QBO_API_CONSUMER_KEY']
@@ -212,5 +213,28 @@ class AuthNetImporter < Sinatra::Base
     end
     total
   end
+
+  get '/prepare_report' do
+    if session[:token]
+      erb :prepare_report
+    else
+      redirect "/"
+    end
+  end
+
+  post '/process_report' do
+    # if session[:token]
+      r = Report.new(params[:report_file])
+      @report = r.data
+      erb :report
+    # else
+    #   redirect "/"
+    # end
+  end
+
+get "/report" do
+  @report
+  erb :report
+end
 
 end
