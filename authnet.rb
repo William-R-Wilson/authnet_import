@@ -232,9 +232,22 @@ class AuthNetImporter < Sinatra::Base
     # end
   end
 
-get "/report" do
-  @report
-  erb :report
-end
+  get "/report" do
+    @report
+    erb :report
+  end
+
+  get "/credit_card_transactions" do
+    if session[:token]
+      api = QboApi.new(oauth_data)
+      @cc = []
+      trans_list = api.query(%{select * from Purchase where PaymentType = 'CreditCard'})
+      #puts @request.to_s
+      trans_list.each do |r|
+        @cc.push(r)
+      end
+    end
+      erb :credit_card_sample
+  end
 
 end

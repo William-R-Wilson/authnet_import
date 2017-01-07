@@ -24,6 +24,10 @@ class Report
       this_line["AccountRef"] = {"value" => "13",
                                   "name" => t[:account]
                                 }
+      this_line["ClassRef"] = {"value" => "13",
+                                "name" => t[:program]
+                              }
+      this_line[""]
       report["Line"].push(this_line)
     end
     return report
