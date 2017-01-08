@@ -1,22 +1,20 @@
 class Report
 
   require 'csv'
-  attr_accessor :total, :transactions, :data
+  attr_accessor :data
 
-  def initialize(file)
+  def initialize(file, info={})
     output = CSV.open(file, headers: true, header_converters: :symbol)
-    #@headers = output.first.to_a
     @transactions = output.each
-    #puts transactions.first
-    @data = process_report(@transactions)
-#    @total = get_total(@transactions)
+    @data = process_report(@transactions, info)
   end
 
-  def process_report(transactions)
+  def process_report(transactions, info)
     report = {}
     report["Purchase"] = {"AccountRef" => {},
                           "PaymentType" => "CreditCard"}
-
+    report["TotalAmt"] = get_total(transactions).to_s
+    report["TxnDate"] = info[:statement_date]
     report["Line"] = []
     transactions.each do |t|
       this_line = {}
@@ -38,7 +36,7 @@ class Report
     transactions.each do |t|
       total += t[:amount].to_f
     end
-    total
+    total.round(2)
   end
 
 end

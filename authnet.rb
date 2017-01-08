@@ -2,7 +2,7 @@ class AuthNetImporter < Sinatra::Base
 
 
   Dotenv.load
-
+  require 'pry'
   require_relative 'receipt'
   require_relative 'cc_report'
 
@@ -214,6 +214,9 @@ class AuthNetImporter < Sinatra::Base
     total
   end
 
+##  Credit Card report sequence
+
+#get file and statement date
   get '/prepare_report' do
     if session[:token]
       erb :prepare_report
@@ -223,20 +226,78 @@ class AuthNetImporter < Sinatra::Base
   end
 
   post '/process_report' do
-    # if session[:token]
-      r = Report.new(params[:report_file])
-      @report = r.data
-      erb :report
-    # else
-    #   redirect "/"
-    # end
+    if session[:token]
+      session[:file] = params[:report_file]
+      trans = CSV.read(params[:report_file], headers: true, header_converters: :symbol)
+      session[:statement_date] = params[:statement_date]
+      session[:accounts] = get_accounts(trans)
+      session[:classes] = get_classes(trans)
+      redirect :map_accounts
+    else
+      redirect "/"
+    end
   end
 
-  get "/report" do
-    @report
+  def get_classes(trans)
+    classes = []
+    trans.each do |t|
+      classes.push(t[:program])
+    end
+    classes.uniq
+  end
+
+  def get_accounts(trans)
+    accounts = []
+    trans.each do |t|
+      accounts.push(t[:account])
+    end
+    accounts.uniq
+  end
+
+#map accounts
+
+#### need to get class and account names as well as ID from Quickbooks
+  get "/map_accounts" do
+    api = QboApi.new(oauth_data)
+    @accounts = session[:accounts]
+    @cc_account = api.query(%{select * from Account where AccountType = 'Credit Card'})
+    @expense_accounts = api.query(%{select * from Account where Classification = 'Expense'})
+    erb :map_accounts
+  end
+
+  post "/set_cc_accounts" do
+    session[:cc_account] = params[:credit_card_account]
+    params.delete("credit_card_account")
+    session[:accounts] = params.to_json
+    redirect :map_classes
+  end
+
+#map classes
+
+  get "/map_classes" do
+    api = QboApi.new(oauth_data)
+    @classes = session[:classes]
+    @qb_classes = api.query(%{select * from Class})
+    erb :map_classes
+  end
+
+  post "/set_cc_classes" do
+    session[:classes] = params.to_json
+    binding.pry
+  end
+
+#build
+
+  get "/build_cc_report" do
+    @report = Report.new(session[:file], {cc_account: session[:cc_account],
+                                    accounts: session[:accounts],
+                                    classes: session[:classes],
+                                    statement_date: session[:statement_date]})
     erb :report
   end
 
+
+  #for API reference in building requests
   get "/credit_card_transactions" do
     if session[:token]
       api = QboApi.new(oauth_data)
@@ -247,7 +308,19 @@ class AuthNetImporter < Sinatra::Base
         @cc.push(r)
       end
     end
-      erb :credit_card_sample
+    erb :credit_card_sample
   end
+
+  get "/list_accounts" do
+    api = QboApi.new(oauth_data)
+    @acc = []
+    accts_list = api.query(%{select * from Account})
+    accts_list.each do |a|
+      @acc.push(a)
+    end
+    erb :list_accounts
+  end
+
+
 
 end

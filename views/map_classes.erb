@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title><%= title %></title>
+  </head>
+  <body>
+    <div>
+      <form method = "post" action = "set_cc_classes">
+        <h1>Select Classes for individual transaction lines</h1>
+        <% @classes.each do |c| %>
+        <div><%= "For #{c} use: " %>
+          <select name= <%= c.gsub(/\s+/, "_") %> >
+            <% @qb_classes["QueryResponse"]["Class"].each do |q| %>
+                <option value =<%= q["Id"] %>><%= q["Name"] %></option>
+            <% end %>
+          </select>
+        </div>
+        <% end %>
+        <div>
+          <input type="submit" value="Submit">
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
