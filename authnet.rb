@@ -268,7 +268,7 @@ class AuthNetImporter < Sinatra::Base
   post "/set_cc_accounts" do
     session[:cc_account] = params[:credit_card_account]
     params.delete("credit_card_account")
-    session[:accounts] = params.to_json
+    session[:accounts] = get_account_names(params).to_json
     redirect :map_classes
   end
 
@@ -282,9 +282,32 @@ class AuthNetImporter < Sinatra::Base
   end
 
   post "/set_cc_classes" do
-    session[:classes] = params.to_json
+    session[:classes] = get_class_names(params).to_json
     binding.pry
   end
+
+  #api.get :customer, session[:default_customer]
+  #get names of accounts and classes
+  def get_account_names(data)
+    new_accounts_hash = {}
+    api = QboApi.new(oauth_data)
+    data.each do |k,v|
+      this_account = api.get :account, v
+      new_accounts_hash[k] = {val: v, name: this_account["Name"]}
+    end
+    new_accounts_hash
+  end
+
+  def get_class_names(data)
+    new_classes_hash = {}
+    api = QboApi.new(oauth_data)
+    data.each do |k, v|
+      this_class = api.get :class, v
+      new_classes_hash[k] = {val: v, name: this_class["Name"]}
+    end
+    new_classes_hash
+  end
+
 
 #build
 
@@ -295,7 +318,6 @@ class AuthNetImporter < Sinatra::Base
                                     statement_date: session[:statement_date]})
     erb :report
   end
-
 
   #for API reference in building requests
   get "/credit_card_transactions" do
@@ -320,7 +342,5 @@ class AuthNetImporter < Sinatra::Base
     end
     erb :list_accounts
   end
-
-
 
 end
