@@ -229,6 +229,7 @@ class AuthNetImporter < Sinatra::Base
     if session[:token]
       session[:file] = params[:report_file]
       trans = CSV.read(params[:report_file], headers: true, header_converters: :symbol)
+      session[:count] = trans.count
       session[:statement_date] = params[:statement_date]
       session[:accounts] = get_accounts(trans)
       session[:classes] = get_classes(trans)
@@ -256,7 +257,6 @@ class AuthNetImporter < Sinatra::Base
 
 #map accounts
 
-#### need to get class and account names as well as ID from Quickbooks
   get "/map_accounts" do
     api = QboApi.new(oauth_data)
     @accounts = session[:accounts]
@@ -266,9 +266,12 @@ class AuthNetImporter < Sinatra::Base
   end
 
   post "/set_cc_accounts" do
-    session[:cc_account] = params[:credit_card_account]
+
+    api = QboApi.new(oauth_data)
+    cc_acct = api.get :account, params[:credit_card_account]
+    session[:cc_account] = {name: cc_acct["Name"], val: cc_acct["Id"]}
     params.delete("credit_card_account")
-    session[:accounts] = get_account_names(params).to_json
+    session[:accounts] = get_account_names(params.to_json)
     redirect :map_classes
   end
 
@@ -282,8 +285,8 @@ class AuthNetImporter < Sinatra::Base
   end
 
   post "/set_cc_classes" do
-    session[:classes] = get_class_names(params).to_json
-    binding.pry
+    session[:classes] = get_class_names(params.to_json)
+    redirect "/build_cc_report"
   end
 
   #api.get :customer, session[:default_customer]
@@ -291,7 +294,7 @@ class AuthNetImporter < Sinatra::Base
   def get_account_names(data)
     new_accounts_hash = {}
     api = QboApi.new(oauth_data)
-    data.each do |k,v|
+    JSON.parse(data).each do |k,v|
       this_account = api.get :account, v
       new_accounts_hash[k] = {val: v, name: this_account["Name"]}
     end
@@ -301,9 +304,9 @@ class AuthNetImporter < Sinatra::Base
   def get_class_names(data)
     new_classes_hash = {}
     api = QboApi.new(oauth_data)
-    data.each do |k, v|
-      this_class = api.get :class, v
-      new_classes_hash[k] = {val: v, name: this_class["Name"]}
+    JSON.parse(data).each do |k, v|
+      this_class = api.query(%{select * from Class where Id = '#{v}'})
+      new_classes_hash[k] = {val: v, name: this_class["QueryResponse"]["Class"].first["Name"]}
     end
     new_classes_hash
   end
@@ -312,10 +315,12 @@ class AuthNetImporter < Sinatra::Base
 #build
 
   get "/build_cc_report" do
-    @report = Report.new(session[:file], {cc_account: session[:cc_account],
-                                    accounts: session[:accounts],
-                                    classes: session[:classes],
-                                    statement_date: session[:statement_date]})
+    @report = Report.new(session[:file], {cc_account: (session[:cc_account]),
+                                    accounts: (session[:accounts]),
+                                    classes: (session[:classes]),
+                                    statement_date: session[:statement_date],
+                                    count: session[:count]})
+
     erb :report
   end
 
@@ -325,7 +330,6 @@ class AuthNetImporter < Sinatra::Base
       api = QboApi.new(oauth_data)
       @cc = []
       trans_list = api.query(%{select * from Purchase where PaymentType = 'CreditCard'})
-      #puts @request.to_s
       trans_list.each do |r|
         @cc.push(r)
       end

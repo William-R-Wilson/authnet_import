@@ -10,6 +10,7 @@ require 'omniauth'
 require 'omniauth-quickbooks'
 require 'dotenv'
 require 'qbo_api'
+require 'pry'
 
 Bundler.require
 
