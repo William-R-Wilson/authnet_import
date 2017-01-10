@@ -233,6 +233,7 @@ class AuthNetImporter < Sinatra::Base
       session[:statement_date] = params[:statement_date]
       session[:accounts] = get_accounts(trans)
       session[:classes] = get_classes(trans)
+      session[:total] = get_total(trans)
       redirect :map_accounts
     else
       redirect "/"
@@ -254,6 +255,15 @@ class AuthNetImporter < Sinatra::Base
     end
     accounts.uniq
   end
+
+  def get_total(transactions)
+    total = 0
+    transactions.each do |t|
+      total += t[:amount].to_f
+    end
+    total.round(2).to_s
+  end
+
 
 #map accounts
 
@@ -315,11 +325,13 @@ class AuthNetImporter < Sinatra::Base
 #build
 
   get "/build_cc_report" do
-    @report = Report.new(session[:file], {cc_account: (session[:cc_account]),
+    report = Report.new(session[:file], {cc_account: (session[:cc_account]),
                                     accounts: (session[:accounts]),
                                     classes: (session[:classes]),
                                     statement_date: session[:statement_date],
-                                    count: session[:count]})
+                                    count: session[:count],
+                                    total: session[:total]})
+    @data = report.data
 
     erb :report
   end

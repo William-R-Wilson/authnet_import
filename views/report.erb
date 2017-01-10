@@ -1,1 +1,5 @@
-<%= @report.data.to_s %>
+<% @data["Line"].each do |l| %>
+    <%= l["Amount"] %>
+<% end %>
+
+<%= @data %>
