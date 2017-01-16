@@ -325,15 +325,33 @@ class AuthNetImporter < Sinatra::Base
 #build
 
   get "/build_cc_report" do
-    report = Report.new(session[:file], {cc_account: (session[:cc_account]),
-                                    accounts: (session[:accounts]),
-                                    classes: (session[:classes]),
-                                    statement_date: session[:statement_date],
-                                    count: session[:count],
-                                    total: session[:total]})
-    @data = report.data
+    if session[:token]
+      report = Report.new(session[:file], {cc_account: (session[:cc_account]),
+                                      accounts: (session[:accounts]),
+                                      classes: (session[:classes]),
+                                      statement_date: session[:statement_date],
+                                      count: session[:count],
+                                      total: session[:total]})
+      @data = report.data
+      session[:report] = @data
+      erb :report
+    else
+      redirect "/"
+    end
+    #binding.pry
+  end
 
-    erb :report
+  post '/send_cc_to_quickbooks' do
+    if session[:token]
+      puts "Authorized!"
+      puts session[:report]
+      api = QboApi.new(oauth_data)
+      response = api.create :purchase, payload: session[:report]
+      puts response
+    else
+      puts "not authorized"
+    end
+    redirect "/"
   end
 
   #for API reference in building requests
@@ -341,7 +359,7 @@ class AuthNetImporter < Sinatra::Base
     if session[:token]
       api = QboApi.new(oauth_data)
       @cc = []
-      trans_list = api.query(%{select * from Purchase where PaymentType = 'CreditCard'})
+      trans_list = api.query(%{select * from Purchase where PaymentType = 'CreditCard'} )
       trans_list.each do |r|
         @cc.push(r)
       end

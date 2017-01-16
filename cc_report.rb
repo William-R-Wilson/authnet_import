@@ -1,6 +1,7 @@
 class Report
 
   require 'csv'
+  require 'pp'
   attr_accessor :data
 
   def initialize(file, info={})
@@ -12,8 +13,8 @@ class Report
   def process_report(transactions, info)
     count = 0
     report = {}
-    report["Purchase"] = {"AccountRef" => {value: info[:cc_account][:val], name: info[:cc_account][:name]}}
-    report["Purchase"]["PaymentType"] = "CreditCard"
+    report["AccountRef"] = {value: info[:cc_account][:val], name: info[:cc_account][:name]}
+    report["PaymentType"] = "CreditCard"
     report["TotalAmt"] = info[:total]
     report["TxnDate"] = info[:statement_date]
     report["Line"] = []
@@ -38,6 +39,7 @@ class Report
         }
       report["Line"].push(this_line)
     end
+    pp report
     return report
   end
 
