@@ -44,7 +44,7 @@ class AuthNetImporter < Sinatra::Base
       api = QboApi.new(oauth_data)
       @resp = api.query(%{select * from Customer}) #api.all :customers
     end
-    erb :customers
+    erb :customers, layout: :layout
   end
 
   post '/set_default_customer' do
@@ -59,7 +59,7 @@ class AuthNetImporter < Sinatra::Base
       api = QboApi.new(oauth_data)
       @resp = api.query(%{select * from Class}) #api.all :customers
     end
-    erb :classes
+    erb :classes, layout: :layout
   end
 
   post '/set_default_class' do
@@ -75,7 +75,7 @@ class AuthNetImporter < Sinatra::Base
       api = QboApi.new(oauth_data)
       @resp = api.query(%{select * from Item})
     end
-    erb :items
+    erb :items, layout: :layout
   end
 
   post '/set_default_item' do
@@ -91,7 +91,7 @@ class AuthNetImporter < Sinatra::Base
       api=QboApi.new(oauth_data)
       @resp = api.query(%{select * from Item})
     end
-    erb :fee_items
+    erb :fee_items, layout: :layout
   end
 
   post '/set_default_fee' do
@@ -103,7 +103,7 @@ class AuthNetImporter < Sinatra::Base
   #step 5 get csv file info
 
   get '/choose_file' do
-    erb :choose_file
+    erb :choose_file, layout: :layout
   end
 
   post '/set_file' do
@@ -123,7 +123,7 @@ class AuthNetImporter < Sinatra::Base
       @customer = api.get :customer, session[:default_customer]
       @class = api.query(%{select * from Class where Id = '#{session[:default_class]}'})
       #get params for each deposit
-      erb :new_receipt
+      erb :new_receipt, layout: :layout
     end
   end
 
@@ -149,7 +149,7 @@ class AuthNetImporter < Sinatra::Base
     session[:prev_pos] = session[:position]
     session[:position] += @num_trans.to_i
     session[:current_receipt] = @receipt
-    erb :create_receipt
+    erb :create_receipt, layout: :layout
   end
 
   post '/send_to_quickbooks' do
@@ -184,7 +184,7 @@ class AuthNetImporter < Sinatra::Base
       end
       @sample = response.first
     end
-    erb :sales_receipt_sample
+    erb :sales_receipt_sample, layout: :layout
   end
 
   def oauth_data
@@ -219,7 +219,7 @@ class AuthNetImporter < Sinatra::Base
 #get file and statement date
   get '/prepare_report' do
     if session[:token]
-      erb :prepare_report
+      erb :prepare_report, layout: :layout
     else
       redirect "/"
     end
@@ -271,8 +271,8 @@ class AuthNetImporter < Sinatra::Base
     api = QboApi.new(oauth_data)
     @accounts = session[:accounts]
     @cc_account = api.query(%{select * from Account where AccountType = 'Credit Card'})
-    @expense_accounts = api.query(%{select * from Account where Classification = 'Expense'})
-    erb :map_accounts
+    @expense_accounts = api.query(%{select * from Account where AccountType = 'Expense'})
+    erb :map_accounts, layout: :layout
   end
 
   post "/set_cc_accounts" do
@@ -291,7 +291,7 @@ class AuthNetImporter < Sinatra::Base
     api = QboApi.new(oauth_data)
     @classes = session[:classes]
     @qb_classes = api.query(%{select * from Class})
-    erb :map_classes
+    erb :map_classes, layout: :layout
   end
 
   post "/set_cc_classes" do
@@ -334,7 +334,7 @@ class AuthNetImporter < Sinatra::Base
                                       total: session[:total]})
       @data = report.data
       session[:report] = @data
-      erb :report
+      erb :report, layout: :layout
     else
       redirect "/"
     end
@@ -364,7 +364,7 @@ class AuthNetImporter < Sinatra::Base
         @cc.push(r)
       end
     end
-    erb :credit_card_sample
+    erb :credit_card_sample, layout: :layout
   end
 
   get "/list_accounts" do
@@ -374,7 +374,7 @@ class AuthNetImporter < Sinatra::Base
     accts_list.each do |a|
       @acc.push(a)
     end
-    erb :list_accounts
+    erb :list_accounts, layout: :layout
   end
 
 end

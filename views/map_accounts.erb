@@ -18,7 +18,7 @@
         <h1>Select Accounts for individual transaction lines</h1>
         <% @accounts.each do |a| %>
         <div><%= "For #{a} use: " %>
-          <select name= <%= a.gsub(/\s+/, "_") %> >
+          <select class name= <%= a.gsub(/\s+/, "_") %> >
             <% @expense_accounts.each do |e| %>
                 <option value =<%= e["Id"] %>><%= e["Name"] %></option>
             <% end %>
