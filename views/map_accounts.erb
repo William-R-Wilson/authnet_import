@@ -1,34 +1,24 @@
-
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title><%= title %></title>
-  </head>
-  <body>
-    <div>
-      <form method = "post" action = "set_cc_accounts"><!-- this will repeat for each account in report -->
-        <h1>Select Credit Card Account</h1>
-        <p>this is the actual credit card acccount</p>
-        <select name="credit_card_account">
-          <% @cc_account.each do |a| %>
-            <option value=<%= a["Id"] %>><%= a["Name"] %></option>
-          <% end %>
-        </select>
-        <h1>Select Accounts for individual transaction lines</h1>
-        <% @accounts.each do |a| %>
-        <div><%= "For #{a} use: " %>
-          <select class name= <%= a.gsub(/\s+/, "_") %> >
-            <% @expense_accounts.each do |e| %>
-                <option value =<%= e["Id"] %>><%= e["Name"] %></option>
-            <% end %>
-          </select>
-        </div>
+<div class="form-group">
+  <form method = "post" action = "set_cc_accounts"><!-- this will repeat for each account in report -->
+    <h1>Select Credit Card Account</h1>
+    <p>this is the actual credit card acccount</p>
+    <select name="credit_card_account" class="form-control">
+      <% @cc_account.each do |a| %>
+        <option value=<%= a["Id"] %>><%= a["Name"] %></option>
+      <% end %>
+    </select>
+    <h1>Select Accounts for individual transaction lines</h1>
+    <% @accounts.each do |a| %>
+    <div><%= "For #{a} use: " %>
+      <select class="form-control" name= <%= a.gsub(/\s+/, "_") %> >
+        <% @expense_accounts.each do |e| %>
+            <option value =<%= e["Id"] %>><%= e["Name"] %></option>
         <% end %>
-        <div>
-          <input type="submit" value="Submit">
-        </div>
-      </form>
+      </select>
     </div>
-  </body>
-</html>
+    <% end %>
+    <div>
+      <input type="submit" class="btn btn-success" value="Submit">
+    </div>
+  </form>
+</div>

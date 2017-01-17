@@ -1,7 +1,7 @@
-Credit Card Report for: <%= @data["TxnDate"] %>
+<h2>Credit Card Report for: <%= @data["TxnDate"] %></h2>
 
 <div>
-  <table>
+  <table class="table table-striped">
     <tr>
       <th>Employee</th>
       <th>Description</th>
@@ -29,6 +29,6 @@ Credit Card Report for: <%= @data["TxnDate"] %>
 
 <div>
   <form method="post" action="send_cc_to_quickbooks">
-    <input type="submit" value="Send to Quickbooks">
+    <button type="submit" class="btn btn-success">Send to Quickbooks</button>
   </form>
 </div>

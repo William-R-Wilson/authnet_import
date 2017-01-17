@@ -1,24 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title><%= title %></title>
-  </head>
-  <body>
-
-  <h1>Select Default Item for Sales Receipts</h1>
-  <div>
-    <form method = "post" action = "set_default_item">
-      <select name="default_item">
+<h1>Select Default Item for Sales Receipts</h1>
+<div class="form-group">
+  <form method="post" action="set_default_item">
+      <select class="form-control" name="default_item">
           <% @resp["QueryResponse"]["Item"].each do |item| %>
               <option value =<%= item["Id"] %>><%= item["Name"] %></option>
           <% end %>
       </select>
-      <div>
-        <input type="submit" value="Submit">
+      <div class="form-group">
+        <button type="submit" class="btn btn-success" value="Submit">Submit</button>
       </div>
-    </form>
-  </div>
-
-  </body>
-</html>
+  </form>
+</div>

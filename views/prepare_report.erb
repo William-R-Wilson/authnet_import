@@ -1,15 +1,23 @@
+<div class="form-group">
 <form method="POST" action="process_report">
-  <div>
-    Statement Date: <br />
-    <input type="text" name="statement_date"> (format: yyyy-mm-dd)
+  <div class="row">
+  <div class = "col-md-4">
+    <div>
+      Statement Date: <br />
+      <input type="text" class="form-control" name="statement_date"> (format: yyyy-mm-dd)
+    </div>
   </div>
-  <h2>Pick a file</h2>
-  <div>
-    <label class="btn btn-default btn-file">
-      Browse <input type="file" style="display: none;" name="report_file">
-    </label>
   </div>
-  <div>
-    <input type="submit" class="btn btn-default" value="Submit">
+  <div class="row">
+    <h2>Pick a file</h2>
+    <div>
+      <label class="btn btn-default btn-file">
+        <input type="file" name="report_file" value="Browse">
+      </label>
+    </div>
+    <div>
+      <input type="submit" class="btn btn-success" value="Submit">
+    </div>
   </div>
 </form>
+</div>

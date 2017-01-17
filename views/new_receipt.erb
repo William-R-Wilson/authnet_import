@@ -1,27 +1,30 @@
 
-<div>Enter the deposit info from the statement</div>
+<h2>Enter the deposit info from the statement</h2>
+<div class = "form-group col-md-6">
 <form method="POST" action = "create_receipt">
   <div>
     Transaction Date: <br />
-    <input type="text" name = "trans_date"> (format: yyyy-mm-dd)
+    <input type="text" class="form-control" name = "trans_date"> (format: yyyy-mm-dd)
   </div>
   <div>
     # Transactions:<br />
-    <input type="text" name="num_transactions">
+    <input type="text" class="form-control" name="num_transactions">
   </div>
   <div>
     Fee amount:<br />
-    <input type="text" name="fee_amount">
-  </div>
-    Transaction total:<br />
-    <input type="text" name="receipt_total">
+    <input type="text" class="form-control" name="fee_amount">
   </div>
   <div>
-    <input type="submit" value="Submit">
+    Transaction total:<br />
+    <input type="text" class="form-control" name="receipt_total">
+  </div>
+  <div>
+    <input type="submit" class="btn btn-success" value="Submit">
   </div>
 </form>
+</div>
 
-<div>
+<div class="col-md-6">
   <p>The default item for this receipt will be: <%= @default_item["Name"] %></p>
   <p>Fees will be marked to item:  <%= @fee_item["Name"] %></p>
   <p>Default customer:  <%= @customer["FullyQualifiedName"] %></p>
@@ -29,4 +32,3 @@
   <p>CSV data source:  <%= session[:file] %></p>
   <p><%= session[:position] %> lines have been processed so far</p>
 </div>
-<div><%= session.to_s %></div>

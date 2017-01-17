@@ -1,26 +1,17 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title><%= title %></title>
-  </head>
-  <body>
-    <div>
-      <form method = "post" action = "set_cc_classes">
-        <h1>Select Classes for individual transaction lines</h1>
-        <% @classes.each do |c| %>
-        <div><%= "For #{c} use: " %>
-          <select name= <%= c.gsub(/\s+/, "_") %> >
-            <% @qb_classes["QueryResponse"]["Class"].each do |q| %>
-                <option value =<%= q["Id"] %>><%= q["Name"] %></option>
-            <% end %>
-          </select>
-        </div>
+<div class="form-group">
+  <form method = "post" action = "set_cc_classes">
+    <h1>Select Classes for individual transaction lines</h1>
+    <% @classes.each do |c| %>
+    <div><%= "For #{c} use: " %>
+      <select class = "form-control" name= <%= c.gsub(/\s+/, "_") %> >
+        <% @qb_classes["QueryResponse"]["Class"].each do |q| %>
+            <option value =<%= q["Id"] %>><%= q["Name"] %></option>
         <% end %>
-        <div>
-          <input type="submit" value="Submit">
-        </div>
-      </form>
+      </select>
     </div>
-  </body>
-</html>
+    <% end %>
+    <div>
+      <input type="submit" class="btn btn-success" value="Submit">
+    </div>
+  </form>
+</div>

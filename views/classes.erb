@@ -1,24 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title><%= title %></title>
-  </head>
-  <body>
-
-  <h1>Select Default Class for Sales Receipts</h1>
-  <div>
-    <form method = "post" action = "set_default_class">
-      <select name="default_class">
-          <% @resp["QueryResponse"]["Class"].each do |c| %>
-              <option value =<%= c["Id"] %>><%= c["Name"] %></option>
-          <% end %>
-      </select>
-      <div>
-        <input type="submit" value="Submit">
-      </div>
-    </form>
-  </div>
-
-  </body>
-</html>
+<h1>Select Default Class for Sales Receipts</h1>
+<div>
+  <form method = "post" action = "set_default_class">
+    <select name="default_class">
+        <% @resp["QueryResponse"]["Class"].each do |c| %>
+            <option value =<%= c["Id"] %>><%= c["Name"] %></option>
+        <% end %>
+    </select>
+    <div>
+      <input type="submit" value="Submit">
+    </div>
+  </form>
+</div>
