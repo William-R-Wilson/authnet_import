@@ -11,7 +11,7 @@
 </div>
 
 <div>
-  <table>
+  <table class="table table-striped">
     <tr>
       <th>Description</th>
       <th>Amount</th>
@@ -34,12 +34,11 @@
 </div>
 
 <form method="post" action="send_to_quickbooks">
-
-  <input type="submit" value="Send to Quickbooks">
+  <input type="submit" class="btn btn-success" value="Send to Quickbooks">
 </form>
 <form method="get" action="skip_receipt">
-  <input type="submit" value="skip this one">
+  <input type="submit" class="btn btn-danger" value="skip this one">
 </form>
 <form method="get" action="try_again">
-  <input type="submit" value="do over">
+  <input type="submit" class="btn btn-default" value="do over">
 </form>

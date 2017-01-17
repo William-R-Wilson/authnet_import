@@ -1,0 +1,34 @@
+
+<div class="form-group">
+  <form method = "post" action = "set_qb_info">
+    <h3>Select a default customer:</h3>
+    <select class="form-control" name="default_customer">
+        <% @cust["QueryResponse"]["Customer"].each do |c| %>
+            <option value =<%= c["Id"] %>><%= c["FullyQualifiedName"] %></option>
+        <% end %>
+    </select>
+
+    <h3>Select Default Class for Sales Receipts</h3>
+    <select class="form-control" name="default_class">
+        <% @classes["QueryResponse"]["Class"].each do |c| %>
+            <option value =<%= c["Id"] %>><%= c["Name"] %></option>
+        <% end %>
+    </select>
+
+
+    <h3>Select Default Item for Sales Receipts</h3>
+    <select class="form-control" name="default_item">
+          <% @item["QueryResponse"]["Item"].each do |item| %>
+              <option value =<%= item["Id"] %>><%= item["Name"] %></option>
+          <% end %>
+      </select>
+
+    <h3>Select Default Item for Fees</h3>
+    <select class="form-control" name="default_fee_item">
+        <% @item["QueryResponse"]["Item"].each do |item| %>
+            <option value =<%= item["Id"] %>><%= item["Name"] %></option>
+        <% end %>
+    </select>
+    <input type="submit" class="btn btn-success" value="Submit">
+  </form>
+</div>
