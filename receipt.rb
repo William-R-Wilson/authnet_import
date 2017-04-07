@@ -31,11 +31,19 @@ class Receipt
     receipt_total = 0
     count = 0
     find_place(contributions, info[:place])
+    puts info[:num]
     info[:num].times do
       #count += 1
       line = {}
       row = contributions.first
+      puts row
       if row[:response_code] != "1"
+        redo
+      end
+      if row[:action_code] == "VOID" || row[:action_code] == "void"
+        redo
+      end
+      if row[:action_code] == "EXPIRED" || row[:action_code] == "expired"
         redo
       end
       if row.nil?

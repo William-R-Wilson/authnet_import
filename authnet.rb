@@ -258,6 +258,9 @@ class AuthNetImporter < Sinatra::Base
       end
     end
 
+
+
+
     post '/send_cc_to_quickbooks' do
       if session[:token]
         puts "Authorized!"
@@ -270,6 +273,49 @@ class AuthNetImporter < Sinatra::Base
       end
       redirect "/"
     end
+
+
+
+    ##FRP import
+    #get file
+
+    get '/donation_file' do
+      erb :donation_file, layout: :layout
+    end
+
+    post '/set_donation_file' do
+      #session[:file] = params["file_name"]
+      trans = CSV.read(params["file_name"], headers: true, header_converters: :symbol)
+      session[:classes] = get_classes(trans)
+      session[:items] = get_items(trans)
+    end
+
+    # get_items(trans, term)
+    #   items = []
+    #   trans.each do |t|
+    #     items.push(t[])
+
+    def get_classes(trans)
+      classes = []
+      trans.each do |t|
+        classes.push(t[:program])
+      end
+      classes.uniq
+    end
+    # post '/process_report' do
+    #   if session[:token]
+    #     session[:file] = params[:report_file]
+    #     trans = CSV.read(params[:report_file], headers: true, header_converters: :symbol)
+    #     session[:count] = trans.count
+    #     session[:statement_date] = params[:statement_date]
+    #     session[:accounts] = get_accounts(trans)
+    #     session[:classes] = get_classes(trans)
+    #     session[:total] = get_total(trans)
+    #     redirect :map_accounts
+    #   else
+    #     redirect "/"
+    #   end
+    # end
 
   def oauth_data
     {
@@ -296,6 +342,41 @@ class AuthNetImporter < Sinatra::Base
       total += l["Amount"].to_i
     end
     total
+  end
+
+  get '/employees' do
+    api = QboApi.new(oauth_data)
+    @employees = api.query(%{select * from Employee})
+    csv = CSV.open("employees.csv", 'w', {col_sep: ",", quote_char: '\'' })
+    arr = []
+    #binding.pry
+    @employees["QueryResponse"]["Employee"].each do |e|
+      arr << e["GivenName"]
+      arr << e["FamilyName"]
+      if e["PrimaryAddr"]
+        arr << e["PrimaryAddr"]["Line1"]
+        arr << e["PrimaryAddr"]["Line2"] || ""
+        arr << e["PrimaryAddr"]["City"]
+        arr << e["PrimaryAddr"]["CountrySubDivisionCode"]
+        arr << e["PrimaryAddr"]["PostalCode"]
+      else
+        arr << ""
+        arr << ""
+        arr << ""
+        arr << ""
+        arr << ""
+      end
+      arr << e["SSN"]
+      if e["PrimaryEmailAddr"]
+        arr << e["PrimaryEmailAddr"]["Address"]
+      else
+        arr << ""
+      end
+      arr << "\n"
+    end
+    csv << arr
+    csv.close
+    erb :employees, layout: :layout
   end
 
 end

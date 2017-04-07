@@ -1,0 +1,16 @@
+<ul>
+<% @employees["QueryResponse"]["Employee"].each do |e| %>
+  <li>
+    <%= e["GivenName"] %>
+    <%= e["GivenName"] %>
+    <%= e["FamilyName"] %>
+    <% if e["PrimaryAddr"] %>
+      <%= e["PrimaryAddr"]["Line1"] %>
+      <%= e["PrimaryAddr"]["City"] %>
+      <%= e["PrimaryAddr"]["CountrySubDivisionCode"] %>
+      <%= e["PrimaryAddr"]["PostalCode"] %>
+    <% end %>
+    <%= e["SSN"] %>
+  </li>
+<% end %>
+</ul>

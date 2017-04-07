@@ -13,8 +13,10 @@
 .ruby-version
 *.gem
 .rspec
-todo.txt
 *.sess
 *.log
 *.txt
 *.csv
+*.ods
+*.xls
+*.xlsx
